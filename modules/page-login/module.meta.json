@@ -1,0 +1,23 @@
+{
+  "name": "page-login",
+  "displayName": "로그인 페이지",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "소셜 로그인 버튼이 포함된 로그인 페이지. Split 레이아웃 디자인.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {}
+  },
+  "provides": ["login-page", "social-login"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": {
+      "path": "login",
+      "component": "LoginPage",
+      "layout": "minimal"
+    }
+  }
+}

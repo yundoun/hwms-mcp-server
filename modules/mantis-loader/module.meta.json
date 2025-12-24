@@ -1,0 +1,46 @@
+{
+  "name": "mantis-loader",
+  "version": "1.0.0",
+  "displayName": "Mantis Loader",
+  "description": "MUI 기반 로딩 컴포넌트. Linear/Circular Progress 지원.",
+  "category": "ui",
+  "author": "HWMS",
+  "license": "MIT",
+  "entry": "src/index.ts",
+  "exports": {
+    "components": ["Loader", "CircularLoader"],
+    "hooks": ["useLoader"],
+    "providers": ["LoaderProvider"]
+  },
+  "dependencies": {
+    "runtime": {
+      "@mui/material": "^5.15.0",
+      "@emotion/react": "^11.11.0",
+      "@emotion/styled": "^11.11.0"
+    },
+    "modules": []
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "platforms": ["web"],
+  "tags": ["loader", "loading", "progress", "spinner", "mui", "material-ui", "mantis"],
+  "documentation": {
+    "usage": "LoaderProvider로 앱을 감싸고, useLoader 훅으로 로딩 상태를 제어합니다.",
+    "examples": [
+      {
+        "title": "Linear Loader",
+        "code": "const { showLinearLoader, hideLoader } = useLoader();\nshowLinearLoader();\n// 작업 후\nhideLoader();"
+      },
+      {
+        "title": "Circular Loader with Message",
+        "code": "showCircularLoader('데이터를 불러오는 중...');"
+      },
+      {
+        "title": "Standalone Usage",
+        "code": "<Loader loading={isLoading} />\n<CircularLoader loading={isLoading} fullscreen message=\"처리 중...\" />"
+      }
+    ]
+  }
+}

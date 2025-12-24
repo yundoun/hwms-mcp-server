@@ -1,0 +1,23 @@
+{
+  "name": "page-register",
+  "displayName": "회원가입 페이지",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "약관 동의, 프로필 설정이 포함된 회원가입 페이지.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {}
+  },
+  "provides": ["register-page", "signup-page"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": {
+      "path": "register",
+      "component": "RegisterPage",
+      "layout": "minimal"
+    }
+  }
+}

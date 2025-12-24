@@ -1,0 +1,78 @@
+{
+  "name": "android-app-shell",
+  "displayName": "Android 앱 쉘",
+  "version": "1.0.0",
+  "category": "shell",
+  "description": "하이브리드 웹앱을 위한 Android 네이티브 앱 쉘입니다. WebView 기반의 앱 컨테이너와 네이티브 브릿지 핸들러(카메라, 푸시, 디바이스 정보 등)를 제공합니다.",
+  "platforms": ["android"],
+  "dependencies": {
+    "modules": ["native-bridge-core"],
+    "npm": {}
+  },
+  "provides": ["android-webview", "native-bridge-handlers", "android-app-container"],
+  "conflicts": ["ios-app-shell"],
+  "envVariables": [
+    {
+      "name": "ANDROID_APP_ID",
+      "description": "Android 앱 패키지 ID (예: com.example.myapp)",
+      "required": true,
+      "default": "com.template.hybridapp"
+    },
+    {
+      "name": "ANDROID_APP_NAME",
+      "description": "앱 표시 이름",
+      "required": true,
+      "default": "Hybrid App"
+    }
+  ],
+  "setupSteps": [
+    {
+      "platform": "android",
+      "instruction": "Android Studio에서 android/ 폴더를 열어 프로젝트를 로드합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "app/build.gradle.kts에서 applicationId를 프로젝트에 맞게 변경합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "app/src/main/res/values/strings.xml에서 앱 이름을 변경합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "웹 앱 파일을 app/src/main/assets/ 폴더에 배치합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "카메라 기능 사용 시 AndroidManifest.xml에 CAMERA 권한이 이미 포함되어 있습니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "푸시 알림 사용 시 Firebase 프로젝트 설정 후 google-services.json을 app/ 폴더에 추가합니다."
+    }
+  ],
+  "files": {
+    "main": "android/app/src/main/java/com/template/MainActivity.kt",
+    "webview": "android/app/src/main/java/com/template/WebViewActivity.kt",
+    "bridge": "android/app/src/main/java/com/template/bridge/",
+    "manifest": "android/app/src/main/AndroidManifest.xml",
+    "resources": "android/app/src/main/res/"
+  },
+  "bridgeHandlers": [
+    {
+      "name": "BridgeHandler",
+      "file": "android/app/src/main/java/com/template/bridge/BridgeHandler.kt",
+      "description": "메인 브릿지 핸들러 - 웹과 네이티브 간 통신 관리"
+    },
+    {
+      "name": "CameraHandler",
+      "file": "android/app/src/main/java/com/template/bridge/CameraHandler.kt",
+      "description": "카메라/갤러리 접근 핸들러"
+    },
+    {
+      "name": "PushHandler",
+      "file": "android/app/src/main/java/com/template/bridge/PushHandler.kt",
+      "description": "푸시 알림 핸들러"
+    }
+  ]
+}

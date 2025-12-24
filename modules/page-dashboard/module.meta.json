@@ -1,0 +1,32 @@
+{
+  "name": "page-dashboard",
+  "displayName": "대시보드",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "Analytics 스타일 대시보드. 도넛 차트, 진행률 표시기, 활동 타임라인 포함.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {
+      "apexcharts": "^4.3.0",
+      "react-apexcharts": "^1.7.0"
+    }
+  },
+  "provides": ["dashboard", "analytics-dashboard", "donut-chart", "activity-timeline"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": {
+      "path": "dashboard",
+      "component": "DashboardPage"
+    },
+    "web.menu": {
+      "id": "dashboard",
+      "title": "대시보드",
+      "type": "item",
+      "url": "/dashboard",
+      "icon": "DashboardIcon"
+    }
+  }
+}

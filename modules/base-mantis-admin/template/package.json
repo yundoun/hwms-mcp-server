@@ -1,0 +1,43 @@
+{
+  "name": "mantis-admin-starter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightweight admin template based on Mantis React",
+  "author": "HWMS",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/public-sans": "^5.2.0",
+    "@mui/icons-material": "^7.0.0",
+    "@mui/material": "^7.0.0",
+    "@mui/lab": "^7.0.0-beta.0",
+    "apexcharts": "^5.0.0",
+    "axios": "^1.7.0",
+    "formik": "^2.4.0",
+    "lodash-es": "^4.17.0",
+    "react": "^19.0.0",
+    "react-apexcharts": "^1.7.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.0.0",
+    "simplebar-react": "^3.3.0",
+    "yup": "^1.6.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "prettier": "^3.4.0",
+    "vite": "^6.0.0",
+    "vite-jsconfig-paths": "^2.0.1"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx",
+    "format": "prettier --write src"
+  }
+}

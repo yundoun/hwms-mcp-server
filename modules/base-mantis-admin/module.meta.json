@@ -1,0 +1,51 @@
+{
+  "name": "base-mantis-admin",
+  "displayName": "Mantis Admin 기반",
+  "version": "1.0.0",
+  "category": "base",
+  "description": "Mantis Admin 템플릿의 핵심 기반. MUI 테마, 레이아웃, 인증 UI 포함.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": [],
+    "npm": {
+      "@emotion/react": "^11.14.0",
+      "@emotion/styled": "^11.14.0",
+      "@mui/icons-material": "^7.0.0",
+      "@mui/material": "^7.0.0",
+      "apexcharts": "^4.3.0",
+      "react": "^19.0.0",
+      "react-apexcharts": "^1.7.0",
+      "react-dom": "^19.0.0",
+      "react-router-dom": "^7.1.1",
+      "simplebar-react": "^3.3.0"
+    }
+  },
+  "provides": [
+    "admin-base",
+    "mui-theme",
+    "main-layout",
+    "auth-pages",
+    "dashboard",
+    "sample-crud"
+  ],
+  "conflicts": [],
+  "envVariables": [
+    {
+      "name": "VITE_APP_TITLE",
+      "description": "Application title displayed in browser",
+      "required": false,
+      "default": "Mantis Admin"
+    }
+  ],
+  "setupSteps": [
+    {
+      "platform": "web",
+      "instruction": "Run 'npm install' to install dependencies"
+    },
+    {
+      "platform": "web",
+      "instruction": "Run 'npm run dev' to start development server"
+    }
+  ],
+  "templatePath": "template/"
+}

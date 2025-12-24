@@ -1,0 +1,57 @@
+{
+  "name": "page-sample-crud",
+  "displayName": "샘플 CRUD",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "CRUD 기본 예제 페이지. 목록, 등록, 수정 페이지 포함. 개발 참고용.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {}
+  },
+  "provides": ["sample-crud", "crud-example"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": [
+      {
+        "path": "sample/list",
+        "component": "SampleListPage",
+        "file": "List"
+      },
+      {
+        "path": "sample/create",
+        "component": "SampleCreatePage",
+        "file": "Create"
+      },
+      {
+        "path": "sample/edit/:id",
+        "component": "SampleEditPage",
+        "file": "Edit"
+      }
+    ],
+    "web.menu": {
+      "id": "sample-crud",
+      "title": "샘플 데이터",
+      "type": "collapse",
+      "icon": "InventoryIcon",
+      "children": [
+        {
+          "id": "sample-list",
+          "title": "샘플 목록",
+          "type": "item",
+          "url": "/sample/list",
+          "icon": "ListAltIcon"
+        },
+        {
+          "id": "sample-create",
+          "title": "샘플 등록",
+          "type": "item",
+          "url": "/sample/create",
+          "icon": "AddBoxIcon"
+        }
+      ]
+    }
+  }
+}

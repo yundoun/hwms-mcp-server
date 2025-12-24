@@ -1,0 +1,43 @@
+{
+  "name": "mantis-snackbar",
+  "version": "1.0.0",
+  "displayName": "Mantis Snackbar",
+  "description": "MUI 기반 Snackbar/Toast 컴포넌트. React Context를 사용한 상태 관리.",
+  "category": "ui",
+  "author": "HWMS",
+  "license": "MIT",
+  "entry": "src/index.ts",
+  "exports": {
+    "components": ["Snackbar"],
+    "hooks": ["useSnackbar"],
+    "providers": ["SnackbarProvider"]
+  },
+  "dependencies": {
+    "runtime": {
+      "@mui/material": "^5.15.0",
+      "@mui/icons-material": "^5.15.0",
+      "@emotion/react": "^11.11.0",
+      "@emotion/styled": "^11.11.0"
+    },
+    "modules": []
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "platforms": ["web"],
+  "tags": ["snackbar", "toast", "notification", "mui", "material-ui", "mantis"],
+  "documentation": {
+    "usage": "SnackbarProvider로 앱을 감싸고, useSnackbar 훅으로 메시지를 표시합니다.",
+    "examples": [
+      {
+        "title": "기본 사용법",
+        "code": "const { showSuccess, showError } = useSnackbar();\nshowSuccess('저장되었습니다!');"
+      },
+      {
+        "title": "커스텀 옵션",
+        "code": "openSnackbar({ message: '알림', severity: 'warning', autoHideDuration: 5000 });"
+      }
+    ]
+  }
+}

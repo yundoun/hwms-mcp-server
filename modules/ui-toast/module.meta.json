@@ -1,0 +1,23 @@
+{
+  "name": "ui-toast",
+  "displayName": "토스트 메시지",
+  "version": "1.0.0",
+  "category": "ui",
+  "description": "사용자에게 짧은 피드백 메시지를 표시하는 토스트/스낵바 컴포넌트입니다. 성공, 에러, 경고, 정보 타입을 지원하며 자동 사라짐 및 위치 옵션을 제공합니다.",
+  "platforms": ["web", "ios", "android"],
+  "dependencies": {
+    "modules": [],
+    "npm": {
+      "react": "^18.0.0"
+    }
+  },
+  "provides": ["toast-notification", "snackbar"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [
+    {
+      "platform": "web",
+      "instruction": "앱의 루트 컴포넌트에 <ToastProvider>를 추가하세요."
+    }
+  ]
+}

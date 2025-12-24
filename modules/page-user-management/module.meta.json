@@ -1,0 +1,29 @@
+{
+  "name": "page-user-management",
+  "displayName": "사용자 관리",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "사용자 목록, 역할/권한 관리, CRUD 기능이 포함된 사용자 관리 페이지.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {}
+  },
+  "provides": ["user-management", "user-list", "role-management"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": {
+      "path": "users",
+      "component": "UserManagementPage"
+    },
+    "web.menu": {
+      "id": "user-management",
+      "title": "사용자 관리",
+      "type": "item",
+      "url": "/users",
+      "icon": "PeopleIcon"
+    }
+  }
+}

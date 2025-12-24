@@ -1,0 +1,23 @@
+{
+  "name": "ui-bottom-sheet",
+  "displayName": "바텀 시트",
+  "version": "1.0.0",
+  "category": "ui",
+  "description": "화면 하단에서 올라오는 모달 형태의 바텀 시트 컴포넌트입니다. 드래그로 닫기, 스냅 포인트, useBottomSheet 훅을 제공합니다.",
+  "platforms": ["web", "ios", "android"],
+  "dependencies": {
+    "modules": [],
+    "npm": {
+      "react": "^18.0.0"
+    }
+  },
+  "provides": ["bottom-sheet", "modal-sheet", "action-sheet"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [
+    {
+      "platform": "web",
+      "instruction": "바텀 시트 사용 시 <BottomSheetProvider>를 루트에 추가하세요."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "bridge-camera",
+  "displayName": "카메라/갤러리 브릿지",
+  "version": "1.0.0",
+  "category": "media",
+  "description": "네이티브 카메라와 갤러리에 접근하여 사진을 촬영하거나 이미지를 선택할 수 있는 모듈입니다. 이미지를 Base64 또는 파일 URI로 반환합니다.",
+  "platforms": ["ios", "android"],
+  "dependencies": {
+    "modules": ["native-bridge-core"],
+    "npm": {}
+  },
+  "provides": ["camera-access", "gallery-access", "image-picker"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [
+    {
+      "platform": "ios",
+      "instruction": "Info.plist에 NSCameraUsageDescription 키를 추가하고 카메라 사용 목적을 설명해야 합니다."
+    },
+    {
+      "platform": "ios",
+      "instruction": "Info.plist에 NSPhotoLibraryUsageDescription 키를 추가하고 갤러리 접근 목적을 설명해야 합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "AndroidManifest.xml에 android.permission.CAMERA 권한을 추가해야 합니다."
+    },
+    {
+      "platform": "android",
+      "instruction": "AndroidManifest.xml에 android.permission.READ_EXTERNAL_STORAGE 권한을 추가해야 합니다."
+    }
+  ]
+}

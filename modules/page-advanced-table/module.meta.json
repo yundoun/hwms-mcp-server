@@ -1,0 +1,31 @@
+{
+  "name": "page-advanced-table",
+  "displayName": "고급 테이블",
+  "version": "1.0.0",
+  "category": "page",
+  "description": "필터, 정렬, 검색, 페이지네이션이 포함된 고급 데이터 테이블 페이지. MUI DataGrid 기반.",
+  "platforms": ["web"],
+  "dependencies": {
+    "modules": ["base-mantis-admin"],
+    "npm": {
+      "@mui/x-data-grid": "^7.0.0"
+    }
+  },
+  "provides": ["advanced-table", "data-grid", "filterable-table"],
+  "conflicts": [],
+  "envVariables": [],
+  "setupSteps": [],
+  "slots": {
+    "web.routes": {
+      "path": "advanced-table",
+      "component": "AdvancedTablePage"
+    },
+    "web.menu": {
+      "id": "advanced-table",
+      "title": "고급 테이블",
+      "type": "item",
+      "url": "/advanced-table",
+      "icon": "TableChartIcon"
+    }
+  }
+}
