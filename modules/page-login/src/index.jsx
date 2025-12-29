@@ -230,7 +230,7 @@ export default function LoginV2Page() {
 
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
               계정이 없으신가요?{' '}
-              <Link component={RouterLink} to="/auth/register-v2" underline="hover" fontWeight={600}>
+              <Link component={RouterLink} to="/register" underline="hover" fontWeight={600}>
                 회원가입
               </Link>
             </Typography>
