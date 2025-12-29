@@ -19,15 +19,34 @@ AI-driven module selection and scaffold generation for hybrid web applications.
 ### 1. 설치
 
 ```bash
-git clone https://github.com/yundoun/hybrid-webapp-modules-system.git
-cd hybrid-webapp-modules-system
+git clone https://github.com/yundoun/hwms-mcp-server.git
+cd hwms-mcp-server
 npm install
 npm run build
 ```
 
-### 2. Claude Desktop 설정
+### 2. MCP 서버 등록
 
-`~/.claude/claude_desktop_config.json` (Mac/Linux)
+#### Claude Code (CLI) 사용자
+
+**방법 A: 프로젝트 범위** (`.mcp.json` 생성, 팀 공유 가능)
+```bash
+claude mcp add -s project hwms -- node dist/index.js
+```
+
+**방법 B: 사용자 범위** (모든 프로젝트에서 사용)
+```bash
+claude mcp add -s user hwms -- node /절대경로/hwms-mcp-server/dist/index.js
+```
+
+**등록 확인**
+```bash
+claude mcp list
+```
+
+#### Claude Desktop 사용자
+
+`~/Library/Application Support/Claude/claude_desktop_config.json` (Mac)
 `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
 
 ```json
@@ -35,13 +54,21 @@ npm run build
   "mcpServers": {
     "hwms": {
       "command": "node",
-      "args": ["/path/to/hybrid-webapp-modules-system/dist/index.js"]
+      "args": ["/절대경로/hwms-mcp-server/dist/index.js"]
     }
   }
 }
 ```
 
-### 3. Claude Desktop 재시작
+설정 후 Claude Desktop 재시작
+
+### 3. 사용 시작
+
+Claude에게 말하기:
+```
+"사용 가능한 모듈 목록을 보여줘"
+"대시보드와 로그인 페이지가 있는 관리자 앱을 만들어줘"
+```
 
 ## Available Modules
 
