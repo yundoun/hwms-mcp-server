@@ -588,6 +588,11 @@ async function generateWebProject(
       await copyBridgeModule(mod, webPath, directories, files);
     }
 
+    // Add @bridge/* alias to jsconfig.json if bridge modules exist
+    if (classified.bridgeModules.length > 0) {
+      await addBridgeAliasToJsConfig(webPath);
+    }
+
     // Overlay additional UI modules if any
     for (const mod of classified.uiModules) {
       await copyUiModule(mod, webPath, directories, files);
@@ -1129,6 +1134,39 @@ async function injectNpmDependencies(
     }, {});
 
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+}
+
+/**
+ * Add @bridge/* alias to jsconfig.json
+ */
+async function addBridgeAliasToJsConfig(webPath: string): Promise<void> {
+  const jsconfigPath = path.join(webPath, 'jsconfig.json');
+
+  if (!fs.existsSync(jsconfigPath)) {
+    return;
+  }
+
+  try {
+    const jsconfig = JSON.parse(fs.readFileSync(jsconfigPath, 'utf-8'));
+
+    // Ensure compilerOptions and paths exist
+    if (!jsconfig.compilerOptions) {
+      jsconfig.compilerOptions = {};
+    }
+    if (!jsconfig.compilerOptions.paths) {
+      jsconfig.compilerOptions.paths = {};
+    }
+
+    // Add @bridge/* alias if not exists
+    if (!jsconfig.compilerOptions.paths['@bridge/*']) {
+      jsconfig.compilerOptions.paths['@bridge/*'] = ['bridge/*'];
+    }
+
+    fs.writeFileSync(jsconfigPath, JSON.stringify(jsconfig, null, 2));
+  } catch (e) {
+    // If parsing fails, skip silently
+    console.warn('Failed to update jsconfig.json:', e);
+  }
 }
 
 /**

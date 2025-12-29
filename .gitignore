@@ -5,3 +5,5 @@ output/
 .env
 .DS_Store
 .gradle/
+.mcp.json
+.claude/
