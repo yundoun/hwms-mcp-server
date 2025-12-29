@@ -15,14 +15,11 @@ class MainActivity : AppCompatActivity() {
 
         // Launch WebView Activity
         val intent = Intent(this, WebViewActivity::class.java).apply {
-            // For development, use dev server URL
-            // putExtra("WEB_APP_URL", "http://10.0.2.2:3000")
+            // Development options (uncomment one):
+            // putExtra("WEB_APP_URL", "http://10.0.2.2:3000")        // Emulator
+            // putExtra("WEB_APP_URL", "http://192.168.x.x:3000")    // Real device (your IP)
 
-            // For production, use bundled assets
-            // putExtra("WEB_APP_URL", "file:///android_asset/index.html")
-
-            // For development with real device (same Wi-Fi network)
-            putExtra("WEB_APP_URL", "http://192.168.50.41:3000")
+            // Production: uses bundled assets by default (no putExtra needed)
         }
 
         startActivity(intent)
