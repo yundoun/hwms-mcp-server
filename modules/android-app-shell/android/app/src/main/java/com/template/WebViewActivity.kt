@@ -20,18 +20,14 @@ open class WebViewActivity : ComponentActivity() {
 
     companion object {
         /**
-         * Development server URL configuration
+         * URL Configuration
          *
-         * For Android Emulator: Use 10.0.2.2 (maps to host machine's localhost)
-         * For Physical Device: Use your computer's local IP address
-         *   - Find your IP: ifconfig (Mac/Linux) or ipconfig (Windows)
-         *   - Example: "http://192.168.0.100:5173"
+         * Development: Pass URL via Intent extra "WEB_APP_URL"
+         *   - Example: intent.putExtra("WEB_APP_URL", "http://192.168.x.x:3000")
          *
-         * For Production: Set USE_DEV_SERVER = false
+         * Production: Uses assets/index.html by default
          */
-        private const val USE_DEV_SERVER = true
-        private const val DEV_SERVER_URL = "http://10.0.2.2:5173"
-        private const val PRODUCTION_URL = "file:///android_asset/index.html"
+        private const val ASSETS_URL = "file:///android_asset/index.html"
     }
 
     protected lateinit var webView: WebView
@@ -116,9 +112,8 @@ open class WebViewActivity : ComponentActivity() {
 
     private fun loadApp() {
         // Load the web app
-        // Priority: Intent extra > Dev server (if enabled) > Production assets
-        val webAppUrl = intent.getStringExtra("WEB_APP_URL")
-            ?: if (USE_DEV_SERVER) DEV_SERVER_URL else PRODUCTION_URL
+        // Priority: Intent extra > Production assets
+        val webAppUrl = intent.getStringExtra("WEB_APP_URL") ?: ASSETS_URL
 
         android.util.Log.d("WebViewActivity", "Loading URL: $webAppUrl")
         webView.loadUrl(webAppUrl)
