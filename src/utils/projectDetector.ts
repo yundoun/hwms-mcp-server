@@ -215,23 +215,18 @@ export function inferInstalledModules(webPath: string): string[] {
     }
   }
 
-  // 3. components 디렉토리에서 UI 모듈 감지
+  // 3. components 디렉토리에서 UI 모듈 감지 (mantis-* modules only)
   const componentsDir = path.join(webPath, 'src', 'components');
   if (fs.existsSync(componentsDir)) {
     try {
       const entries = fs.readdirSync(componentsDir, { withFileTypes: true });
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          // 알려진 UI 모듈 패턴
-          if (entry.name === 'toast' || entry.name === 'Toast') {
-            installed.push('ui-toast');
-          } else if (entry.name === 'loading' || entry.name === 'Loading') {
-            installed.push('ui-loading');
-          } else if (
-            entry.name === 'bottom-sheet' ||
-            entry.name === 'BottomSheet'
-          ) {
-            installed.push('ui-bottom-sheet');
+          // mantis-* UI 모듈 패턴
+          if (entry.name === 'mantis-snackbar') {
+            installed.push('mantis-snackbar');
+          } else if (entry.name === 'mantis-loader') {
+            installed.push('mantis-loader');
           }
         }
       }

@@ -274,11 +274,8 @@ async function addUiModuleToProject(
   const directories: string[] = [];
   const files: string[] = [];
 
-  // Determine destination folder name
-  let destName = mod.meta.name;
-  if (destName.startsWith('ui-')) {
-    destName = destName.replace('ui-', '');
-  }
+  // Determine destination folder name (mantis-* modules keep their name)
+  const destName = mod.meta.name;
 
   const componentPath = path.join(webPath, 'src/components', destName);
 

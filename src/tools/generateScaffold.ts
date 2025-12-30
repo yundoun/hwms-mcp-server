@@ -217,7 +217,8 @@ function classifyModules(modules: LoadedModule[]): ClassifiedModules {
       result.androidShell = mod;
     } else if (name.startsWith('bridge-') || name === 'native-bridge-core' || category === 'core') {
       result.bridgeModules.push(mod);
-    } else if (name.startsWith('ui-') || category === 'ui') {
+    } else if (category === 'ui') {
+      // mantis-* UI modules only (ui-* legacy modules removed)
       result.uiModules.push(mod);
     } else {
       result.otherModules.push(mod);
@@ -1241,11 +1242,8 @@ async function copyUiModule(
   const srcPath = path.join(mod.path, 'src');
   if (!fs.existsSync(srcPath)) return;
 
-  // Determine destination folder name
-  let destName = mod.meta.name;
-  if (destName.startsWith('ui-')) {
-    destName = destName.replace('ui-', '');
-  }
+  // Determine destination folder name (mantis-* modules keep their name)
+  const destName = mod.meta.name;
 
   const componentPath = path.join(webPath, 'src/components', destName);
   const hooksPath = path.join(webPath, 'src/hooks');
@@ -1311,8 +1309,8 @@ function transformImports(content: string, _moduleName: string): string {
 
 /**
  * Transform relative imports in hook files to use @components alias
- * When hooks are moved from ui-{name}/src/ to hooks/, their relative imports break
- * Example: './LoadingOverlay' becomes '@components/loading/LoadingOverlay'
+ * When hooks are moved from {module}/src/ to hooks/, their relative imports break
+ * Example: './LoadingOverlay' becomes '@components/{dir}/LoadingOverlay'
  */
 function transformHookImports(content: string, componentDir: string): string {
   // Transform relative imports like './ComponentName' to '@components/{dir}/ComponentName'
@@ -1361,8 +1359,7 @@ async function generateBarrelExports(
 
   // Components index.ts
   const componentExports = classified.uiModules.map(mod => {
-    let name = mod.meta.name;
-    if (name.startsWith('ui-')) name = name.replace('ui-', '');
+    const name = mod.meta.name;
     return `export * from './${name}';`;
   }).join('\n');
 
@@ -1375,8 +1372,7 @@ async function generateBarrelExports(
   // Hooks index.ts
   const hookExports: string[] = [];
   classified.uiModules.forEach(mod => {
-    let name = mod.meta.name;
-    if (name.startsWith('ui-')) name = name.replace('ui-', '');
+    const name = mod.meta.name;
 
     // Check for hook files
     const srcPath = path.join(mod.path, 'src');
@@ -1573,23 +1569,11 @@ function generateAppTsx(classified: ClassifiedModules): string {
   const providers: { open: string; close: string }[] = [];
   const globalComponents: string[] = [];
 
-  // Add UI module providers
+  // Add UI module providers (mantis-* modules only)
   for (const mod of classified.uiModules) {
     const name = mod.meta.name;
 
-    // Legacy ui-* modules
-    if (name === 'ui-toast') {
-      imports.push("import { ToastProvider } from '@hooks/useToast';");
-      providers.push({ open: '<ToastProvider>', close: '</ToastProvider>' });
-    } else if (name === 'ui-loading') {
-      imports.push("import { LoadingProvider } from '@hooks/useLoading';");
-      providers.push({ open: '<LoadingProvider>', close: '</LoadingProvider>' });
-    } else if (name === 'ui-bottom-sheet') {
-      imports.push("import { BottomSheetProvider } from '@hooks/useBottomSheet';");
-      providers.push({ open: '<BottomSheetProvider>', close: '</BottomSheetProvider>' });
-    }
-    // Mantis modules
-    else if (name === 'mantis-snackbar') {
+    if (name === 'mantis-snackbar') {
       imports.push("import { SnackbarProvider, Snackbar } from '@components/mantis-snackbar';");
       providers.push({ open: '<SnackbarProvider>', close: '</SnackbarProvider>' });
       globalComponents.push('<Snackbar />');
@@ -1698,8 +1682,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
   const hasCamera = classified.bridgeModules.some(
     m => m.meta.name === 'bridge-camera'
   );
-  const hasToast = classified.uiModules.some(m => m.meta.name === 'ui-toast');
-  const hasLoading = classified.uiModules.some(m => m.meta.name === 'ui-loading');
   const hasMantisSnackbar = classified.uiModules.some(m => m.meta.name === 'mantis-snackbar');
   const hasMantisLoader = classified.uiModules.some(m => m.meta.name === 'mantis-loader');
 
@@ -1765,49 +1747,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
             </p>
           </div>
         )}
-      </section>`);
-  }
-
-  // Toast
-  if (hasToast) {
-    imports.push("import { useToast } from '@hooks/useToast';");
-    hooks.push(`  const { showToast } = useToast();`);
-
-    demoSections.push(`
-      {/* Toast Section */}
-      <section style={sectionStyle}>
-        <h2 style={headingStyle}>💬 토스트 메시지</h2>
-        <div style={buttonGroupStyle}>
-          <button style={buttonStyle} onClick={() => showToast('일반 메시지입니다', 'info')}>
-            일반 메시지
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#22c55e'}} onClick={() => showToast('성공했습니다!', 'success')}>
-            성공 메시지
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#f59e0b'}} onClick={() => showToast('주의가 필요합니다', 'warning')}>
-            경고 메시지
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#ef4444'}} onClick={() => showToast('오류가 발생했습니다', 'error')}>
-            오류 메시지
-          </button>
-        </div>
-      </section>`);
-  }
-
-  // Loading
-  if (hasLoading) {
-    imports.push("import { useLoading } from '@hooks/useLoading';");
-    hooks.push(`  const { showLoading, hideLoading } = useLoading();`);
-
-    demoSections.push(`
-      {/* Loading Section */}
-      <section style={sectionStyle}>
-        <h2 style={headingStyle}>⏳ 로딩 표시</h2>
-        <div style={buttonGroupStyle}>
-          <button style={buttonStyle} onClick={handleShowLoading}>
-            로딩 표시 (2초)
-          </button>
-        </div>
       </section>`);
   }
 
@@ -1894,16 +1833,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
     } else {
       setImageError(result.error?.message || '사진 선택에 실패했습니다.');
     }
-  };`);
-  }
-
-  if (hasLoading) {
-    functions.push(`
-  const handleShowLoading = () => {
-    showLoading('잠시만 기다려주세요...');
-    setTimeout(() => {
-      hideLoading();${hasToast ? `\n      showToast('작업이 완료되었습니다!', 'success');` : ''}
-    }, 2000);
   };`);
   }
 
