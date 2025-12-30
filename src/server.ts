@@ -13,6 +13,7 @@ import {
 import { listModules, listModulesSchema } from './tools/listModules.js';
 import { resolveDependencies, resolveDependenciesSchema } from './tools/resolveDependencies.js';
 import { generateScaffold, generateScaffoldSchema } from './tools/generateScaffold.js';
+import { addModule, addModuleSchema } from './tools/addModule.js';
 
 export async function createServer(): Promise<Server> {
   const server = new Server(
@@ -45,6 +46,11 @@ export async function createServer(): Promise<Server> {
           name: 'generate_scaffold',
           description: '선택된 모듈들로 프로젝트 구조를 생성합니다. 프로젝트 디렉토리, 모듈 파일, package.json, README.md 등을 자동으로 생성합니다.',
           inputSchema: generateScaffoldSchema,
+        },
+        {
+          name: 'add_module',
+          description: '기존 HWMS 프로젝트에 새 모듈을 추가합니다. 의존성 자동 해결, 라우트/메뉴 자동 주입, Android 핸들러 재생성을 지원합니다.',
+          inputSchema: addModuleSchema,
         },
       ],
     };
@@ -84,6 +90,21 @@ export async function createServer(): Promise<Server> {
             throw new Error('modules 파라미터가 필요합니다 (문자열 배열)');
           }
           const result = await generateScaffold(projectName, modules);
+          return {
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+          };
+        }
+
+        case 'add_module': {
+          const projectPath = args?.projectPath as string;
+          const modules = args?.modules as string[];
+          if (!projectPath || typeof projectPath !== 'string') {
+            throw new Error('projectPath 파라미터가 필요합니다 (기존 프로젝트 경로)');
+          }
+          if (!modules || !Array.isArray(modules)) {
+            throw new Error('modules 파라미터가 필요합니다 (추가할 모듈 배열)');
+          }
+          const result = await addModule(projectPath, modules);
           return {
             content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
           };

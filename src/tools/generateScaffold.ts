@@ -12,6 +12,7 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { resolveDependencies } from './resolveDependencies.js';
 import { loadModule, type LoadedModule } from '../utils/moduleLoader.js';
+import { type HwmsConfig } from '../utils/projectDetector.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,6 +125,25 @@ export async function generateScaffold(
 
   // Generate docs
   await generateDocs(projectPath, resolved.setupSteps, files);
+
+  // Generate hwms.config.json for module tracking
+  const now = new Date().toISOString();
+  const hwmsConfig: HwmsConfig = {
+    version: '1.0.0',
+    createdAt: now,
+    updatedAt: now,
+    baseTemplate: classified.baseTemplate?.meta.name,
+    installedModules: resolved.resolvedModules.map((name) => ({
+      name,
+      version: '1.0.0',
+      installedAt: now,
+    })),
+  };
+  fs.writeFileSync(
+    path.join(projectPath, 'hwms.config.json'),
+    JSON.stringify(hwmsConfig, null, 2)
+  );
+  files.push('hwms.config.json');
 
   return {
     outputPath: projectPath,
@@ -2268,3 +2288,40 @@ ${setupSteps.map((step, i) => `${i + 1}. ${step}`).join('\n')}
   fs.writeFileSync(path.join(docsPath, 'SETUP.md'), setupDoc);
   files.push('docs/SETUP.md');
 }
+
+// ============================================
+// Exported functions for add_module reuse
+// ============================================
+
+export {
+  // Module loading and classification
+  loadModules,
+  classifyModules,
+
+  // Route and menu injection
+  injectRoutes,
+  injectMenuItems,
+  injectNpmDependencies,
+  addBridgeAliasToJsConfig,
+
+  // File copy functions
+  copyBridgeModule,
+  copyUiModule,
+  copyPageModules,
+
+  // Import transformation
+  transformImports,
+  transformHookImports,
+
+  // Android generation
+  generateBridgeHandlerKt,
+  generateBridgeInterfaceKt,
+  generateMainActivityKt,
+  extractHandlerInfo,
+
+  // Types
+  type ClassifiedModules,
+  type HandlerInfo,
+  type RouteSlot,
+  type MenuSlot,
+};
