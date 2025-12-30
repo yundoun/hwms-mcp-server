@@ -218,7 +218,6 @@ function classifyModules(modules: LoadedModule[]): ClassifiedModules {
     } else if (name.startsWith('bridge-') || name === 'native-bridge-core' || category === 'core') {
       result.bridgeModules.push(mod);
     } else if (category === 'ui') {
-      // mantis-* UI modules only (ui-* legacy modules removed)
       result.uiModules.push(mod);
     } else {
       result.otherModules.push(mod);
@@ -1242,7 +1241,7 @@ async function copyUiModule(
   const srcPath = path.join(mod.path, 'src');
   if (!fs.existsSync(srcPath)) return;
 
-  // Determine destination folder name (mantis-* modules keep their name)
+  // Determine destination folder name
   const destName = mod.meta.name;
 
   const componentPath = path.join(webPath, 'src/components', destName);
@@ -1404,15 +1403,6 @@ function generateWebPackageJson(projectName: string, classified: ClassifiedModul
     'react-router-dom': '^6.21.0',
   };
 
-  // Check for mantis-* modules and add MUI dependencies
-  const hasMantisModules = classified.uiModules.some(m => m.meta.name.startsWith('mantis-'));
-  if (hasMantisModules) {
-    dependencies['@mui/material'] = '^5.15.0';
-    dependencies['@mui/icons-material'] = '^5.15.0';
-    dependencies['@emotion/react'] = '^11.11.0';
-    dependencies['@emotion/styled'] = '^11.11.0';
-  }
-
   return {
     name: projectName,
     private: true,
@@ -1569,20 +1559,8 @@ function generateAppTsx(classified: ClassifiedModules): string {
   const providers: { open: string; close: string }[] = [];
   const globalComponents: string[] = [];
 
-  // Add UI module providers (mantis-* modules only)
-  for (const mod of classified.uiModules) {
-    const name = mod.meta.name;
-
-    if (name === 'mantis-snackbar') {
-      imports.push("import { SnackbarProvider, Snackbar } from '@components/mantis-snackbar';");
-      providers.push({ open: '<SnackbarProvider>', close: '</SnackbarProvider>' });
-      globalComponents.push('<Snackbar />');
-    } else if (name === 'mantis-loader') {
-      imports.push("import { LoaderProvider, Loader } from '@components/mantis-loader';");
-      providers.push({ open: '<LoaderProvider>', close: '</LoaderProvider>' });
-      globalComponents.push('<Loader />');
-    }
-  }
+  // UI module providers can be added here if needed
+  // Currently no UI modules require provider setup
 
   // Build provider structure
   const hasProviders = providers.length > 0;
@@ -1682,8 +1660,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
   const hasCamera = classified.bridgeModules.some(
     m => m.meta.name === 'bridge-camera'
   );
-  const hasMantisSnackbar = classified.uiModules.some(m => m.meta.name === 'mantis-snackbar');
-  const hasMantisLoader = classified.uiModules.some(m => m.meta.name === 'mantis-loader');
 
   // Device Info
   if (hasDeviceInfo) {
@@ -1750,52 +1726,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
       </section>`);
   }
 
-  // Mantis Snackbar
-  if (hasMantisSnackbar) {
-    imports.push("import { useSnackbar } from '@components/mantis-snackbar';");
-    hooks.push(`  const { showSuccess, showError, showWarning, showInfo } = useSnackbar();`);
-
-    demoSections.push(`
-      {/* Mantis Snackbar Section */}
-      <section style={sectionStyle}>
-        <h2 style={headingStyle}>🔔 스낵바 알림</h2>
-        <div style={buttonGroupStyle}>
-          <button style={buttonStyle} onClick={() => showInfo('일반 알림 메시지입니다')}>
-            일반 알림
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#22c55e'}} onClick={() => showSuccess('작업이 성공적으로 완료되었습니다!')}>
-            성공 알림
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#f59e0b'}} onClick={() => showWarning('주의가 필요합니다')}>
-            경고 알림
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#ef4444'}} onClick={() => showError('오류가 발생했습니다')}>
-            오류 알림
-          </button>
-        </div>
-      </section>`);
-  }
-
-  // Mantis Loader
-  if (hasMantisLoader) {
-    imports.push("import { useLoader } from '@components/mantis-loader';");
-    hooks.push(`  const { showLinearLoader, showCircularLoader, hideLoader } = useLoader();`);
-
-    demoSections.push(`
-      {/* Mantis Loader Section */}
-      <section style={sectionStyle}>
-        <h2 style={headingStyle}>⏳ 로딩 인디케이터</h2>
-        <div style={buttonGroupStyle}>
-          <button style={buttonStyle} onClick={handleShowLinearLoader}>
-            Linear 로더 (2초)
-          </button>
-          <button style={{...buttonStyle, backgroundColor: '#8b5cf6'}} onClick={handleShowCircularLoader}>
-            Circular 로더 (2초)
-          </button>
-        </div>
-      </section>`);
-  }
-
   // Build the component
   const hooksSection = hooks.length > 0 ? `\n${hooks.join('\n')}\n` : '';
   const stateSection = stateDecls.length > 0 ? `\n${stateDecls.join('\n')}\n` : '';
@@ -1833,23 +1763,6 @@ function generateHomePage(projectName: string, classified: ClassifiedModules): s
     } else {
       setImageError(result.error?.message || '사진 선택에 실패했습니다.');
     }
-  };`);
-  }
-
-  if (hasMantisLoader) {
-    functions.push(`
-  const handleShowLinearLoader = () => {
-    showLinearLoader();
-    setTimeout(() => {
-      hideLoader();${hasMantisSnackbar ? `\n      showSuccess('작업이 완료되었습니다!');` : ''}
-    }, 2000);
-  };
-
-  const handleShowCircularLoader = () => {
-    showCircularLoader('데이터를 불러오는 중...');
-    setTimeout(() => {
-      hideLoader();${hasMantisSnackbar ? `\n      showInfo('데이터 로딩 완료');` : ''}
-    }, 2000);
   };`);
   }
 

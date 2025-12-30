@@ -215,25 +215,6 @@ export function inferInstalledModules(webPath: string): string[] {
     }
   }
 
-  // 3. components 디렉토리에서 UI 모듈 감지 (mantis-* modules only)
-  const componentsDir = path.join(webPath, 'src', 'components');
-  if (fs.existsSync(componentsDir)) {
-    try {
-      const entries = fs.readdirSync(componentsDir, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.isDirectory()) {
-          // mantis-* UI 모듈 패턴
-          if (entry.name === 'mantis-snackbar') {
-            installed.push('mantis-snackbar');
-          } else if (entry.name === 'mantis-loader') {
-            installed.push('mantis-loader');
-          }
-        }
-      }
-    } catch {
-      // 디렉토리 읽기 실패 무시
-    }
-  }
 
   // 중복 제거
   return [...new Set(installed)];
