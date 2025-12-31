@@ -967,12 +967,21 @@ async function injectRoutes(
   // Insert main layout routes
   if (mainRoutes.length > 0) {
     // Find the main layout children array and insert before the catch-all route
-    // Match the comma before catch-all route to avoid double commas
-    const mainCatchAllPattern = /(,?)(\s*{\s*path:\s*'\*',\s*element:\s*<Error404Page\s*\/>\s*})/;
-    if (mainCatchAllPattern.test(content)) {
+    // First check if there are existing routes (has comma before catch-all)
+    const mainCatchAllWithCommaPattern = /,(\s*{\s*path:\s*'\*',\s*element:\s*<Error404Page\s*\/>\s*})/;
+    const mainCatchAllWithoutCommaPattern = /(\[\s*)(\s*{\s*path:\s*'\*',\s*element:\s*<Error404Page\s*\/>\s*})/;
+
+    if (mainCatchAllWithCommaPattern.test(content)) {
+      // There are existing routes, add comma before new routes
       content = content.replace(
-        mainCatchAllPattern,
-        `,\n      // Auto-generated page routes\n${mainRoutes.join(',\n')},$2`
+        mainCatchAllWithCommaPattern,
+        `,\n      // Auto-generated page routes\n${mainRoutes.join(',\n')},$1`
+      );
+    } else if (mainCatchAllWithoutCommaPattern.test(content)) {
+      // No existing routes, don't add leading comma
+      content = content.replace(
+        mainCatchAllWithoutCommaPattern,
+        `$1// Auto-generated page routes\n${mainRoutes.join(',\n')},\n      $2`
       );
     }
   }
@@ -1091,6 +1100,8 @@ ${childrenItems}
 
   // Insert menu items into navigation group
   if (newMenuItems.length > 0) {
+    let injected = false;
+
     // First try: empty children array
     const navEmptyChildrenPattern = /(id:\s*'navigation',[\s\S]*?children:\s*)\[\]/;
     if (navEmptyChildrenPattern.test(content)) {
@@ -1098,9 +1109,26 @@ ${childrenItems}
         navEmptyChildrenPattern,
         `$1[\n        // Auto-generated page menu items\n${newMenuItems.join(',\n')}\n      ]`
       );
-    } else {
-      // Fallback: find existing children with items and append
-      const navChildrenPattern = /(id:\s*'navigation',[\s\S]*?children:\s*\[\s*{[\s\S]*?breadcrumbs:\s*true\s*})/;
+      injected = true;
+    }
+
+    // Second try: find last closing brace in navigation children array
+    if (!injected) {
+      // Pattern to find navigation group's children array closing bracket
+      // Matches: children: [ ...items... ] within navigation group
+      const navChildrenClosePattern = /(id:\s*['"]navigation['"][\s\S]*?children:\s*\[[\s\S]*?})\s*(\]\s*\})/;
+      if (navChildrenClosePattern.test(content)) {
+        content = content.replace(
+          navChildrenClosePattern,
+          `$1,\n        // Auto-generated page menu items\n${newMenuItems.join(',\n')}\n      $2`
+        );
+        injected = true;
+      }
+    }
+
+    // Third try: find breadcrumbs pattern with flexible whitespace
+    if (!injected) {
+      const navChildrenPattern = /(id:\s*['"]navigation['"][\s\S]*?children:\s*\[[\s\S]*?breadcrumbs:\s*true[\s\S]*?})/;
       if (navChildrenPattern.test(content)) {
         content = content.replace(
           navChildrenPattern,
