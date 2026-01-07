@@ -141,6 +141,9 @@ export async function resolveDependencies(
     resolveDfs(name);
   }
 
+  // Auto-add android-app-shell if any native bridge module is selected
+  autoAddNativeShell(resolved, moduleMap, warnings, envVariables, setupSteps, npmDependencies);
+
   // Convert resolved set to sorted array (dependencies first)
   const resolvedModules = sortByDependencyOrder(
     Array.from(resolved),
@@ -154,6 +157,73 @@ export async function resolveDependencies(
     warnings,
     npmDependencies,
   };
+}
+
+/**
+ * Auto-add native app shell modules when native bridge modules are selected
+ * - If any module with 'android' platform and starting with 'bridge-' is selected,
+ *   automatically add 'android-app-shell' if not already included
+ */
+function autoAddNativeShell(
+  resolved: Set<string>,
+  moduleMap: Map<string, ModuleMeta>,
+  warnings: string[],
+  envVariables: EnvVariable[],
+  setupSteps: string[],
+  npmDependencies: Record<string, string>
+): void {
+  const ANDROID_SHELL = 'android-app-shell';
+
+  // Check if android-app-shell is already included
+  if (resolved.has(ANDROID_SHELL)) {
+    return;
+  }
+
+  // Check if any native bridge module (android platform) is selected
+  let hasAndroidBridge = false;
+  for (const moduleName of resolved) {
+    const meta = moduleMap.get(moduleName);
+    if (
+      meta &&
+      moduleName.startsWith('bridge-') &&
+      meta.platforms.includes('android')
+    ) {
+      hasAndroidBridge = true;
+      break;
+    }
+  }
+
+  // Auto-add android-app-shell if needed
+  if (hasAndroidBridge && moduleMap.has(ANDROID_SHELL)) {
+    resolved.add(ANDROID_SHELL);
+
+    const shellMeta = moduleMap.get(ANDROID_SHELL);
+    if (shellMeta) {
+      // Collect env variables from shell module
+      const existingEnvNames = new Set(envVariables.map((e) => e.name));
+      const shellEnvVars = shellMeta.envVariables || [];
+      for (const env of shellEnvVars) {
+        if (!existingEnvNames.has(env.name)) {
+          envVariables.push(env);
+          existingEnvNames.add(env.name);
+        }
+      }
+
+      // Collect setup steps from shell module
+      const shellSetupSteps = shellMeta.setupSteps || [];
+      for (const step of shellSetupSteps) {
+        const stepStr = `[${step.platform.toUpperCase()}] ${step.instruction}`;
+        if (!setupSteps.includes(stepStr)) {
+          setupSteps.push(stepStr);
+        }
+      }
+
+      // Collect NPM dependencies from shell module
+      if (shellMeta.dependencies.npm) {
+        Object.assign(npmDependencies, shellMeta.dependencies.npm);
+      }
+    }
+  }
 }
 
 /**
