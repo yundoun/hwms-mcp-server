@@ -110,11 +110,21 @@ open class WebViewActivity : ComponentActivity() {
         webView.addJavascriptInterface(bridgeInterface, "NativeBridge")
     }
 
-    private fun loadApp() {
-        // Load the web app
-        // Priority: Intent extra > Production assets
-        val webAppUrl = intent.getStringExtra("WEB_APP_URL") ?: ASSETS_URL
+    /**
+     * Override this method to customize the web app URL
+     *
+     * Development: Override and return your dev server URL
+     *   - Emulator: "http://10.0.2.2:5173"
+     *   - Real device: "http://192.168.x.x:5173"
+     *
+     * Production: Return super.getWebAppUrl() to use assets/index.html
+     */
+    protected open fun getWebAppUrl(): String {
+        return intent.getStringExtra("WEB_APP_URL") ?: ASSETS_URL
+    }
 
+    private fun loadApp() {
+        val webAppUrl = getWebAppUrl()
         android.util.Log.d("WebViewActivity", "Loading URL: $webAppUrl")
         webView.loadUrl(webAppUrl)
     }

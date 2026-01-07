@@ -6,7 +6,7 @@
   "description": "하이브리드 웹앱을 위한 Android 네이티브 앱 쉘입니다. WebView 기반의 앱 컨테이너와 네이티브 브릿지 핸들러(카메라, 푸시, 디바이스 정보 등)를 제공합니다.",
   "platforms": ["android"],
   "dependencies": {
-    "modules": ["native-bridge-core"],
+    "modules": ["native-bridge-core", "base-mantis-admin"],
     "npm": {}
   },
   "provides": ["android-webview", "native-bridge-handlers", "android-app-container"],
